@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nuange.dao.UsersDaoCustom">
+    <!--请求好友查询-->
+    <select id="queryFriendRequestList" resultType="com.nuange.vo.FriendRequestVo" parameterType="string">
+        select
+            tu.id as sendUserId,
+            tu.username as sendUsername,
+            tu.face_image as sendFaceImage,
+            tu.nickname as  sendNikename
+        from im_bird.friends_request fr
+        left join im_bird.users tu
+        on fr.send_user_id = tu.id
+        where fr.accept_user_id = #{acceptUserId}
+    </select>
+    <!--好友列表查询-->
+    <select id="queryMyFriends" resultType="com.nuange.vo.MyFriendVO" parameterType="string">
+      select
+          u.id as friendUserId,
+          u.username as friendUsername,
+          u.nickname as friendNickname,
+          u.face_image as friendFaceImage
+
+      from im_bird.my_friends mf
+      left join users u
+      on u.id = mf.my_friend_user_id
+      where mf.my_user_id=#{userId}
+    </select>
+    <update id="batchUpdateMsgSigned" parameterType="java.util.List">
+        update chat_msg set sign_flag =1 where id in
+        <foreach collection="msgIdList" item="item" index="index" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </update>
+</mapper>
